@@ -53,6 +53,9 @@ export default class VidosResolver implements IStateResolver {
       }
     });
     const result = (await response.json()) as PolygonDidResolutionResult;
+    if (result.didResolutionMetadata.error) {
+      throw new Error(`error resolving DID: ${result.didResolutionMetadata.error}`);
+    }
 
     const globalInfo = result.didDocument.verificationMethod[0].global;
     if (globalInfo == null) throw new Error('gist info not found');
@@ -94,7 +97,11 @@ export default class VidosResolver implements IStateResolver {
         Authorization: `Bearer ${this.apiKey}`
       }
     });
-    const result = await response.json();
+    const result = (await response.json()) as PolygonDidResolutionResult;
+    if (result.didResolutionMetadata.error) {
+      throw new Error(`error resolving DID: ${result.didResolutionMetadata.error}`);
+    }
+
     const isGenesis = isGenesisStateId(id, state);
 
     const stateInfo = result.didDocument.verificationMethod[0].info;
