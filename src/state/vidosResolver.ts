@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Id } from '@iden3/js-iden3-core';
 import { type IStateResolver, type ResolvedState, isGenesisStateId } from './resolver';
 import type { DIDDocument, DIDResolutionResult, VerificationMethod } from 'did-resolver';
@@ -34,7 +35,7 @@ type PolygonDidResolutionResult = DIDResolutionResult & {
  * It can serve as drop-in replacement for EthStateResolver.
  */
 export default class VidosResolver implements IStateResolver {
-  constructor(private readonly resolverUrl: string, private readonly apiKey: string) {}
+  constructor(private readonly resolverUrl: string, private readonly apiKey: string, private readonly network: 'main' | 'mumbai' | 'amoy' = 'main') {}
 
   // Note: implementation closely resembles EthStateResolver because Vidos resolver internally uses the same contract.
   // The only difference is the usage of regular HTTP requests instead of web3 calls.
@@ -43,7 +44,7 @@ export default class VidosResolver implements IStateResolver {
     const stateHex = state.toString(16);
 
     const zeroAddress = '11111111111111111111'; // 1 is 0 in base58
-    const did = `did:polygonid:polygon:amoy:${zeroAddress}?gist=${stateHex}`;
+    const did = `did:polygonid:polygon:${this.network}:${zeroAddress}?gist=${stateHex}`;
 
     const response = await fetch(`${this.resolverUrl}/${encodeURIComponent(did)}`, {
       method: 'GET',
@@ -84,7 +85,7 @@ export default class VidosResolver implements IStateResolver {
     const iden3Id = Id.fromBigInt(id);
     const stateHex = state.toString(16);
 
-    const did = `did:polygonid:polygon:amoy:${iden3Id.string()}`;
+    const did = `did:polygonid:polygon:${this.network}:${iden3Id.string()}`;
 
     const didWithState = `${did}?state=${stateHex}`;
     const response = await fetch(`${this.resolverUrl}/${encodeURIComponent(didWithState)}`, {
