@@ -40,10 +40,7 @@ type DidResolutionResult = {
  * It can serve as drop-in replacement for EthStateResolver.
  */
 export default class VidosResolver implements IStateResolver {
-  constructor(
-    private readonly resolverUrl: string,
-    private readonly apiKey: string,
-  ) {}
+  constructor(private readonly resolverUrl: string, private readonly apiKey: string) {}
 
   async rootResolve(state: bigint): Promise<ResolvedState> {
     const stateHex = state.toString(16);
@@ -51,15 +48,12 @@ export default class VidosResolver implements IStateResolver {
     const zeroAddress = '11111111111111111111'; // 1 is 0 in base58
     const did = `did:polygonid:polygon:amoy:${zeroAddress}?gist=${stateHex}`;
 
-    const response = await fetch(
-      `${this.resolverUrl}/${encodeURIComponent(did)}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-      },
-    );
+    const response = await fetch(`${this.resolverUrl}/${encodeURIComponent(did)}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    });
     const result = (await response.json()) as DidResolutionResult;
 
     const globalInfo = result.didDocument.verificationMethod[0].global;
@@ -77,7 +71,7 @@ export default class VidosResolver implements IStateResolver {
         latest: false,
         state: state,
         transitionTimestamp: globalInfo.replacedAtTimestamp,
-        genesis: false,
+        genesis: false
       };
     }
 
@@ -85,7 +79,7 @@ export default class VidosResolver implements IStateResolver {
       latest: true,
       state: state,
       transitionTimestamp: 0,
-      genesis: false,
+      genesis: false
     };
   }
 
@@ -96,15 +90,12 @@ export default class VidosResolver implements IStateResolver {
     const did = `did:polygonid:polygon:amoy:${iden3Id.string()}`;
 
     const didWithState = `${did}?state=${stateHex}`;
-    const response = await fetch(
-      `${this.resolverUrl}/${encodeURIComponent(didWithState)}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-      },
-    );
+    const response = await fetch(`${this.resolverUrl}/${encodeURIComponent(didWithState)}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    });
     const result = await response.json();
     const isGenesis = isGenesisStateId(id, state);
 
@@ -123,7 +114,7 @@ export default class VidosResolver implements IStateResolver {
         latest: false,
         genesis: false,
         state: state,
-        transitionTimestamp: Number.parseInt(stateInfo.replacedAtTimestamp),
+        transitionTimestamp: Number.parseInt(stateInfo.replacedAtTimestamp)
       };
     }
 
@@ -131,7 +122,7 @@ export default class VidosResolver implements IStateResolver {
       latest: stateInfo.replacedAtTimestamp === '0',
       genesis: isGenesis,
       state,
-      transitionTimestamp: Number.parseInt(stateInfo.replacedAtTimestamp),
+      transitionTimestamp: Number.parseInt(stateInfo.replacedAtTimestamp)
     };
   }
 }
