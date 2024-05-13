@@ -1,19 +1,13 @@
 import { Id } from '@iden3/js-iden3-core';
 import { type IStateResolver, type ResolvedState, isGenesisStateId } from './resolver';
+import type { DIDDocument, DIDResolutionResult, VerificationMethod } from 'did-resolver';
 
-type DidResolutionResult = {
-  didResolutionMetadata: unknown;
-  didDocumentMetadata: unknown;
-  didDocument: {
-    id: string;
-    alsoKnownAs: string[];
-    controller: string;
-    verificationMethod: {
-      id: string;
-      type: string;
-      controller: string;
-      stateContractAddress: string;
-      published: boolean;
+/**
+ * Extended DID resolution result that includes additional information about Polygon ID resolution.
+ */
+type PolygonDidResolutionResult = DIDResolutionResult & {
+  didDocument: DIDDocument & {
+    verificationMethod: (VerificationMethod & {
       info: {
         id: string;
         state: string;
@@ -31,7 +25,7 @@ type DidResolutionResult = {
         createdAtBlock: string;
         replacedAtBlock: string;
       };
-    }[];
+    })[];
   };
 };
 
@@ -57,7 +51,7 @@ export default class VidosResolver implements IStateResolver {
         Authorization: `Bearer ${this.apiKey}`
       }
     });
-    const result = (await response.json()) as DidResolutionResult;
+    const result = (await response.json()) as PolygonDidResolutionResult;
 
     const globalInfo = result.didDocument.verificationMethod[0].global;
     if (globalInfo == null) throw new Error('gist info not found');
