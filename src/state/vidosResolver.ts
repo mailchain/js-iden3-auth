@@ -33,8 +33,33 @@ type PolygonDidResolutionResult = DIDResolutionResult & {
 /**
  * Implementation of {@link IStateResolver} that uses Vidos resolver service to resolve states.
  * It can serve as drop-in replacement for EthStateResolver.
+ * 
+ * - Vidos info: [https://vidos.id/](https://vidos.id/).
+ * - Vidos Dashboard: [https://dashboard.vidos.id/](https://dashboard.vidos.id/).
+ * - Vidos Docs: [https://vidos.id/docs/](https://vidos.id/docs/).
+ * - Quick Start Guide - Create a resolver instance: [https://vidos.id/docs/services/resolver/guides/create-instance/](https://vidos.id/docs/services/resolver/guides/create-instance/)
+ * 
+ * @example
+ * ```typescript
+ * const resolver = new VidosResolver('https://my-resolver-123.resolver.service.eu.vidos.id', 'my-api-key');
+ * 
+ * const resolvers = {
+ *   ["polygon:main"]: vidosResolver,
+ * };
+ * 
+ * const verifier = await auth.Verifier.newVerifier({ stateResolver: resolvers, circuitsDir: path.join(__dirname, keyDIR), ipfsGatewayURL: "https://ipfs.io" });
+ * ```
  */
 export default class VidosResolver implements IStateResolver {
+  
+  /**
+   * Create a new VidosResolver instance.
+   * 
+   * @param resolverUrl The URL of the Vidos resolver service to use.
+   * @param apiKey The API key to use for authentication.
+   * @param network The Polygon ID network to use. Default is 'main'.
+   * 
+   */
   constructor(private readonly resolverUrl: string, private readonly apiKey: string, private readonly network: 'main' | 'mumbai' | 'amoy' = 'main') {}
 
   // Note: implementation closely resembles EthStateResolver because Vidos resolver internally uses the same contract.
