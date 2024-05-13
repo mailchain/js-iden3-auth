@@ -42,6 +42,9 @@ type DidResolutionResult = {
 export default class VidosResolver implements IStateResolver {
   constructor(private readonly resolverUrl: string, private readonly apiKey: string) {}
 
+  // Note: implementation closely resembles EthStateResolver because Vidos resolver internally uses the same contract. 
+  // The only difference is the usage of regular HTTP requests instead of web3 calls.
+
   async rootResolve(state: bigint): Promise<ResolvedState> {
     const stateHex = state.toString(16);
 
