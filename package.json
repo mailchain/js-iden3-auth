@@ -66,6 +66,7 @@
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^3.14.2",
     "typechain": "^8.1.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "did-resolver": "4.1.0"
   }
 }
